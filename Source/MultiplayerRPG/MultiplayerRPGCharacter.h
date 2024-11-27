@@ -1,10 +1,11 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+//Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "Core/Game/Ability/RPGAbilitySystemComponent.h"
 #include "MultiplayerRPGCharacter.generated.h"
 
 class USpringArmComponent;
@@ -13,7 +14,9 @@ class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 
-DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
+//DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
+class URPGAbilitySystemComponent;
+class UGameplayAbility;
 
 UCLASS(config=Game)
 class AMultiplayerRPGCharacter : public ACharacter
@@ -44,9 +47,38 @@ class AMultiplayerRPGCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
-public:
+	//GAS
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = RPGCharacter, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<URPGAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "RPG|GameplayAbility", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UGameplayAbility> InGameplayAbility;
+
+public: 
 	AMultiplayerRPGCharacter();
+
+	void BeginPlay();
+
+	FGameplayAbilitySpecHandle RegisterGameAbility();
+
+	UFUNCTION(BlueprintCallable)
+	bool ActiveSkill(FName SkillName);
 	
+private:
+	TMap<FName, FGameplayAbilitySpecHandle> Skills;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 protected:
 

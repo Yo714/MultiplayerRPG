@@ -11,7 +11,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 
-DEFINE_LOG_CATEGORY(LogTemplateCharacter);
+
+//DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 //////////////////////////////////////////////////////////////////////////
 // AMultiplayerRPGCharacter
@@ -52,6 +53,50 @@ AMultiplayerRPGCharacter::AMultiplayerRPGCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+
+	AbilitySystemComponent = CreateDefaultSubobject<URPGAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
+}
+
+void AMultiplayerRPGCharacter::BeginPlay() 
+{
+
+	Super::BeginPlay();
+	if (AbilitySystemComponent && GetLocalRole() == ENetRole::ROLE_Authority) 
+	{
+		AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	}
+
+	RegisterGameAbility();
+}
+
+FGameplayAbilitySpecHandle AMultiplayerRPGCharacter::RegisterGameAbility()
+{
+	if (AbilitySystemComponent&& IsValid(InGameplayAbility)) {
+		FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(InGameplayAbility));
+
+		Skills.Add(TEXT("Skill"), Handle);
+
+		return Handle;
+	}
+
+	return FGameplayAbilitySpecHandle();
+}
+
+bool AMultiplayerRPGCharacter::ActiveSkill(FName SkillName)
+{
+	if (AbilitySystemComponent) 
+	{
+		if (const FGameplayAbilitySpecHandle* Handle = Skills.Find(SkillName)) 
+		{
+			UE_LOG(LogTemp, Log, TEXT("ActiveSkill"));
+
+			return AbilitySystemComponent->TryActivateAbility(*Handle);
+		}
+	}
+	
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -88,7 +133,7 @@ void AMultiplayerRPGCharacter::SetupPlayerInputComponent(UInputComponent* Player
 	}
 	else
 	{
-		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+		//UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
 

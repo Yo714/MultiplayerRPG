@@ -5,7 +5,11 @@
 			"guid": "00000000000000000000000000000000",
 			"description": "Default Uncontrolled Changelist",
 			"files": [
-				"D:/Unreal5/MultiplayerRPG/Content/StarterContent/Architecture/Floor_400x400.uasset"
+				"D:/Unreal5/MultiplayerRPG/Content/StarterContent/Architecture/Floor_400x400.uasset",
+				"D:/Unreal5/MultiplayerRPG/Content/ThirdPerson/Blueprints/Skill.uasset",
+				"D:/Unreal5/MultiplayerRPG/Content/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.uasset",
+				"D:/Unreal5/MultiplayerRPG/Content/ThirdPerson/Blueprints/Cast_Montage.uasset",
+				"D:/Unreal5/MultiplayerRPG/Content/ParagonKhaimera/Characters/Heroes/Khaimera/KhaimeraPlayerCharacter.uasset"
 			]
 		}
 	]
