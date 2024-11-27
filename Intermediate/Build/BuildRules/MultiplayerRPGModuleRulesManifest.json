@@ -1,0 +1,8 @@
+{
+	"SourceFiles": [
+		"D:\\Unreal5\\MultiplayerRPG\\Source\\MultiplayerRPG\\MultiplayerRPG.Build.cs",
+		"D:\\Unreal5\\MultiplayerRPG\\Source\\MultiplayerRPG.Target.cs",
+		"D:\\Unreal5\\MultiplayerRPG\\Source\\MultiplayerRPGEditor.Target.cs"
+	],
+	"EngineVersion": "5.5.0"
+}
