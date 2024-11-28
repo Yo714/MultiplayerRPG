@@ -18,14 +18,14 @@ void URPGAbilityTask_PMAW::Activate()
 		return;
 	}
 
-	if (RPGAbilitySystemComponent)
+	if (AbilitySystemComponent.IsValid())
 	{
 		const FGameplayAbilityActorInfo* ActorInfo = Ability->GetCurrentActorInfo();
 		UAnimInstance* AnimInstance = ActorInfo->GetAnimInstance();
 
 		if (AnimInstance != nullptr)
 		{
-			EventHandle = RPGAbilitySystemComponent->AddGameplayEventTagContainerDelegate(
+			EventHandle = AbilitySystemComponent->AddGameplayEventTagContainerDelegate(
 				EventTags,
 				FGameplayEventTagMulticastDelegate::FDelegate::CreateUObject(this, &URPGAbilityTask_PMAW::OnDamageGameplayEvent));
 		}
@@ -36,9 +36,9 @@ void URPGAbilityTask_PMAW::Activate()
 
 void URPGAbilityTask_PMAW::OnDestroy(bool AbilityEnded)
 {
-	if (RPGAbilitySystemComponent)
+	if (AbilitySystemComponent.IsValid())
 	{
-		RPGAbilitySystemComponent->RemoveGameplayEventTagContainerDelegate(EventTags, EventHandle);
+		AbilitySystemComponent->RemoveGameplayEventTagContainerDelegate(EventTags, EventHandle);
 	}
 
 	Super::OnDestroy(AbilityEnded);

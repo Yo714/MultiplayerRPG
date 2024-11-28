@@ -24,6 +24,10 @@ public:
 	FGameplayAttributeData Health;
 	PROPERTY_FUNCTION_REGISTRATION(URPGAttributeSet, Health);
 
+	UPROPERTY(BlueprintReadOnly, Category = "Attribute", ReplicatedUsing = OnRep_Mana)
+	FGameplayAttributeData Mana;
+	PROPERTY_FUNCTION_REGISTRATION(URPGAttributeSet, Mana);
+
 
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
@@ -31,6 +35,9 @@ public:
 protected:
 	UFUNCTION()
 	virtual void OnRep_Health(const FGameplayAttributeData& OldValue);
+
+	UFUNCTION()
+	virtual void OnRep_Mana(const FGameplayAttributeData& OldValue);
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

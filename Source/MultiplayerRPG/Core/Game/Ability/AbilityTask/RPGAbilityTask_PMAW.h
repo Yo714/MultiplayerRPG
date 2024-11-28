@@ -14,10 +14,6 @@ UCLASS()
 class MULTIPLAYERRPG_API URPGAbilityTask_PMAW : public UAbilityTask_PlayMontageAndWait
 {
 	GENERATED_BODY()
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
-	UAbilitySystemComponent* RPGAbilitySystemComponent;
-
 	
 public:
 	URPGAbilityTask_PMAW();
