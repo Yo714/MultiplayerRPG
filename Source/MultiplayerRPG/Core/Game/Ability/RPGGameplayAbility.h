@@ -10,14 +10,20 @@
  * 
  */
 class UAbilityTask_PlayMontageAndWait;
+class UGameplayEffect;
+
 UCLASS()
 class MULTIPLAYERRPG_API URPGGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
+	UPROPERTY(EditDefaultsOnly, Category = MontageAbility)
 	UAnimMontage* MontageToPlay;
+	 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GameplayEffect)
+	TMap<FGameplayTag, TSubclassOf<UGameplayEffect>> EffectMap;
+
 
 public:
 	URPGGameplayAbility();

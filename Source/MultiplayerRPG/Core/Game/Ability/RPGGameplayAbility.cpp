@@ -37,7 +37,30 @@ void URPGGameplayAbility::OnCancelled()
 
 void URPGGameplayAbility::OnDamageGameplayEvent(FGameplayTag InGameplayTag, FGameplayEventData Payload)
 {
-	UE_LOG(LogTemp, Log, TEXT("URPGGameplayAbility::OnDamageGameplayEvent"));
+	FGameplayAbilityTargetData_ActorArray* NewTargetData_ActorArray = new FGameplayAbilityTargetData_ActorArray();
+	const AActor* InstigatorActor = Payload.Instigator.Get();
+	NewTargetData_ActorArray->TargetActorArray.Add(const_cast<AActor*>(InstigatorActor));
+
+	FGameplayAbilityTargetDataHandle TargetHandleData;
+	TargetHandleData.Add(NewTargetData_ActorArray);
+
+	for (auto& Tmp : EffectMap) 
+	{
+		FGameplayEffectSpecHandle NewHandle = GetAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec(
+			Tmp.Value, 1, MakeEffectContext(CurrentSpecHandle, CurrentActorInfo));
+
+		if (NewHandle.IsValid()) 
+		{
+			FGameplayAbilitySpec* AbilitySpec = GetAbilitySystemComponentFromActorInfo()->FindAbilitySpecFromHandle(CurrentSpecHandle);
+			ApplyAbilityTagsToGameplayEffectSpec(*NewHandle.Data.Get(), AbilitySpec);
+			if (AbilitySpec) 
+			{
+				NewHandle.Data->SetByCallerTagMagnitudes = AbilitySpec->SetByCallerTagMagnitudes;
+			}
+		}
+
+		TArray<FActiveGameplayEffectHandle> ActiveGameplayEffectHandles = K2_ApplyGameplayEffectSpecToTarget(NewHandle, TargetHandleData);
+	}
 }
 
 void URPGGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

@@ -9,7 +9,12 @@
 				"D:/Unreal5/MultiplayerRPG/Content/ThirdPerson/Blueprints/Skill.uasset",
 				"D:/Unreal5/MultiplayerRPG/Content/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.uasset",
 				"D:/Unreal5/MultiplayerRPG/Content/ThirdPerson/Blueprints/Cast_Montage.uasset",
-				"D:/Unreal5/MultiplayerRPG/Content/ParagonKhaimera/Characters/Heroes/Khaimera/KhaimeraPlayerCharacter.uasset"
+				"D:/Unreal5/MultiplayerRPG/Content/ParagonKhaimera/Characters/Heroes/Khaimera/KhaimeraPlayerCharacter.uasset",
+				"D:/Unreal5/MultiplayerRPG/Content/ThirdPerson/Blueprints/GAS/Skill.uasset",
+				"D:/Unreal5/MultiplayerRPG/Content/ThirdPerson/Blueprints/GAS/Cast_Montage.uasset",
+				"D:/Unreal5/MultiplayerRPG/Content/ThirdPerson/Blueprints/GAS/GA_NormalAttack.uasset",
+				"D:/Unreal5/MultiplayerRPG/Content/ThirdPerson/Blueprints/GAS/GE_NormalAttack_Damage.uasset",
+				"D:/Unreal5/MultiplayerRPG/Content/ThirdPerson/Blueprints/GAS/GE_NormalAttack_MoreDamage.uasset"
 			]
 		}
 	]

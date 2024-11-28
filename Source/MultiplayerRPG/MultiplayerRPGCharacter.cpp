@@ -57,6 +57,13 @@ AMultiplayerRPGCharacter::AMultiplayerRPGCharacter()
 
 	AbilitySystemComponent = CreateDefaultSubobject<URPGAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
+
+	RPGAttributeSet = CreateDefaultSubobject<URPGAttributeSet>(TEXT("RPGAttributeSet"));
+
+
+
+
+
 }
 
 void AMultiplayerRPGCharacter::BeginPlay() 
@@ -67,6 +74,10 @@ void AMultiplayerRPGCharacter::BeginPlay()
 	{
 		AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	}
+
+	TArray<UAttributeSet*> RPGAttributeSets;
+	RPGAttributeSets.Add(Cast<UAttributeSet>(RPGAttributeSet));
+	AbilitySystemComponent->SetSpawnedAttributes(RPGAttributeSets);
 
 	RegisterGameAbility();
 }

@@ -4,7 +4,7 @@
 
 #include "AttributeSet.h"
 
-#define FUNCTION_REGISTRATION(ClassName, PropertyName)\
+#define PROPERTY_FUNCTION_REGISTRATION(ClassName, PropertyName)\
 GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName,PropertyName)\
 GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName)\
 GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName)\

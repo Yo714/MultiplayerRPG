@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "Core/Game/Ability/RPGAbilitySystemComponent.h"
+#include "Core/Game/Ability/RPGAttributeSet.h"
 #include "MultiplayerRPGCharacter.generated.h"
 
 class USpringArmComponent;
@@ -16,6 +17,7 @@ struct FInputActionValue;
 
 //DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 class URPGAbilitySystemComponent;
+class URPGAttributeSet;
 class UGameplayAbility;
 
 UCLASS(config=Game)
@@ -51,8 +53,14 @@ class AMultiplayerRPGCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = RPGCharacter, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<URPGAbilitySystemComponent> AbilitySystemComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = RPGCharacter, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<URPGAttributeSet> RPGAttributeSet;
+
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "RPG|GameplayAbility", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UGameplayAbility> InGameplayAbility;
+
+
+
 
 public: 
 	AMultiplayerRPGCharacter();
