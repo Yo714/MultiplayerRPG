@@ -38,8 +38,8 @@ void URPGGameplayAbility::OnCancelled()
 void URPGGameplayAbility::OnDamageGameplayEvent(FGameplayTag InGameplayTag, FGameplayEventData Payload)
 {
 	FGameplayAbilityTargetData_ActorArray* NewTargetData_ActorArray = new FGameplayAbilityTargetData_ActorArray();
-	const AActor* InstigatorActor = Payload.Instigator.Get();
-	NewTargetData_ActorArray->TargetActorArray.Add(const_cast<AActor*>(InstigatorActor));
+	const AActor* TargetActor = Payload.Target.Get();
+	NewTargetData_ActorArray->TargetActorArray.Add(const_cast<AActor*>(TargetActor));
 
 	FGameplayAbilityTargetDataHandle TargetHandleData;
 	TargetHandleData.Add(NewTargetData_ActorArray);

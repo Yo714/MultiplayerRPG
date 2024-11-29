@@ -56,10 +56,11 @@ class AMultiplayerRPGCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = RPGCharacter, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<URPGAttributeSet> RPGAttributeSet;
 
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "RPG|GameplayAbility", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UGameplayAbility> InGameplayAbility;
+	//UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "RPG|GameplayAbility", meta = (AllowPrivateAccess = "true"))
+	//TSubclassOf<UGameplayAbility> InGameplayAbility;
 
-
+	//UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "RPG|GameplayAbility", meta = (AllowPrivateAccess = "true"))
+	//TSubclassOf<UGameplayAbility> InGameplayAbility2;
 
 
 public: 
@@ -67,13 +68,27 @@ public:
 
 	void BeginPlay();
 
-	FGameplayAbilitySpecHandle RegisterGameAbility();
+	FGameplayAbilitySpecHandle RegisterGameAbility(TArray<UGameplayAbility*> InAbilities);
 
 	UFUNCTION(BlueprintCallable)
-	bool ActiveSkill(FName SkillName);
+	void K2_ActiveSkill(FGameplayTag SkillName);
+
+	UFUNCTION(Server, Reliable)
+	void ActiveSkill(FGameplayTag SkillName);
 	
 private:
 	TMap<FName, FGameplayAbilitySpecHandle> Skills;
+
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void K2_MontagePlayServer(UAnimMontage* InNewAnimMontage, float InPlayRate = 1.0f, float InTimeToStartMontageAt = 0.f, bool bStopAllMontages = true, FName InStartSectionName = NAME_None);
+
+	UFUNCTION(Server, Reliable)
+	void MontagePlayServer(UAnimMontage* InNewAnimMontage, float InPlayRate, float InTimeToStartMontageAt = 0.f, bool bStopAllMontages = true, FName InStartSectionName = NAME_None);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MontagePlayMulticast(UAnimMontage* InNewAnimMontage, float InPlayRate, float InTimeToStartMontageAt = 0.f, bool bStopAllMontages = true, FName InStartSectionName = NAME_None);
 
 
 

@@ -10,6 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "RPGGameState.h"
+#include "RPGGameState.h"
 
 
 //DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -79,35 +81,78 @@ void AMultiplayerRPGCharacter::BeginPlay()
 	RPGAttributeSets.Add(Cast<UAttributeSet>(RPGAttributeSet));
 	AbilitySystemComponent->SetSpawnedAttributes(RPGAttributeSets);
 
-	RegisterGameAbility();
+
+	if (ARPGGameState* GameState = GetWorld()->GetGameState<ARPGGameState>()) 
+	{
+		TArray<UGameplayAbility*> Abilities = GameState->GetCharacterSkills(1);
+
+		RegisterGameAbility(Abilities);
+	}
+
 }
 
-FGameplayAbilitySpecHandle AMultiplayerRPGCharacter::RegisterGameAbility()
+FGameplayAbilitySpecHandle AMultiplayerRPGCharacter::RegisterGameAbility(TArray<UGameplayAbility*> InAbilities)
 {
-	if (AbilitySystemComponent&& IsValid(InGameplayAbility)) {
-		FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(InGameplayAbility));
-
-		Skills.Add(TEXT("Skill"), Handle);
-
-		return Handle;
+	if (GetLocalRole() == ENetRole::ROLE_Authority) 
+	{
+		if (AbilitySystemComponent && InAbilities.Num() > 0)
+		{
+			for (auto Tmp : InAbilities)
+			{
+				FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Tmp));
+				const FString String =Tmp->AbilityTags.ToStringSimple();
+				Skills.Add(FName(String), Handle);
+			}
+		}
 	}
 
 	return FGameplayAbilitySpecHandle();
+
+}
+void AMultiplayerRPGCharacter::K2_ActiveSkill(FGameplayTag SkillName)
+{
+	ActiveSkill(SkillName);
 }
 
-bool AMultiplayerRPGCharacter::ActiveSkill(FName SkillName)
+void AMultiplayerRPGCharacter::ActiveSkill_Implementation(FGameplayTag SkillName)
 {
-	if (AbilitySystemComponent) 
+	if (AbilitySystemComponent)
 	{
-		if (const FGameplayAbilitySpecHandle* Handle = Skills.Find(SkillName)) 
+		if (const FGameplayAbilitySpecHandle* Handle = Skills.Find(FName(*SkillName.ToString())))
 		{
-			UE_LOG(LogTemp, Log, TEXT("ActiveSkill"));
-
-			return AbilitySystemComponent->TryActivateAbility(*Handle);
+			AbilitySystemComponent->TryActivateAbility(*Handle);
 		}
 	}
-	
-	return false;
+}
+
+void AMultiplayerRPGCharacter::K2_MontagePlayServer(UAnimMontage* InNewAnimMontage, float InPlayRate, float InTimeToStartMontageAt, bool bStopAllMontages, FName InStartSectionName)
+{
+	MontagePlayServer(InNewAnimMontage, InPlayRate, InTimeToStartMontageAt, bStopAllMontages, InStartSectionName);
+}
+
+void AMultiplayerRPGCharacter::MontagePlayServer_Implementation(UAnimMontage* InNewAnimMontage, float InPlayRate, float InTimeToStartMontageAt, bool bStopAllMontages, FName InStartSectionName)
+{
+	if (InNewAnimMontage) 
+	{
+		MontagePlayMulticast(InNewAnimMontage, InPlayRate, InTimeToStartMontageAt, bStopAllMontages, InStartSectionName);
+	}
+}
+
+void AMultiplayerRPGCharacter::MontagePlayMulticast_Implementation(UAnimMontage* InNewAnimMontage, float InPlayRate, float InTimeToStartMontageAt, bool bStopAllMontages, FName InStartSectionName)
+{
+	if (GetMesh() && InNewAnimMontage)
+	{
+		if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance()) 
+		{
+			if (AnimInstance->Montage_Play(InNewAnimMontage, InPlayRate, EMontagePlayReturnType::MontageLength, InTimeToStartMontageAt, bStopAllMontages) > 0.f) 
+			{
+				if (InStartSectionName != NAME_None) 
+				{
+					AnimInstance->Montage_JumpToSection(InStartSectionName, InNewAnimMontage);
+				}
+			}
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -3,6 +3,7 @@
 #include "MultiplayerRPGGameMode.h"
 #include "MultiplayerRPGCharacter.h"
 #include "UObject/ConstructorHelpers.h"
+#include "RPGGameState.h"
 
 AMultiplayerRPGGameMode::AMultiplayerRPGGameMode()
 {
@@ -12,4 +13,6 @@ AMultiplayerRPGGameMode::AMultiplayerRPGGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	GameStateClass = ARPGGameState::StaticClass();
 }
