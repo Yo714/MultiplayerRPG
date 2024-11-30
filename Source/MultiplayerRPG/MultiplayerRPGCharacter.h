@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "Core/Game/Ability/RPGAbilitySystemComponent.h"
 #include "Core/Game/Ability/RPGAttributeSet.h"
+#include "Core/Game/Character/Core/RPGCharacterBase.h"
 #include "MultiplayerRPGCharacter.generated.h"
 
 class USpringArmComponent;
@@ -21,7 +21,7 @@ class URPGAttributeSet;
 class UGameplayAbility;
 
 UCLASS(config=Game)
-class AMultiplayerRPGCharacter : public ACharacter
+class AMultiplayerRPGCharacter : public ARPGCharacterBase
 {
 	GENERATED_BODY()
 
@@ -49,18 +49,6 @@ class AMultiplayerRPGCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
-	//GAS
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = RPGCharacter, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<URPGAbilitySystemComponent> AbilitySystemComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = RPGCharacter, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<URPGAttributeSet> RPGAttributeSet;
-
-	//UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "RPG|GameplayAbility", meta = (AllowPrivateAccess = "true"))
-	//TSubclassOf<UGameplayAbility> InGameplayAbility;
-
-	//UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "RPG|GameplayAbility", meta = (AllowPrivateAccess = "true"))
-	//TSubclassOf<UGameplayAbility> InGameplayAbility2;
 
 
 public: 

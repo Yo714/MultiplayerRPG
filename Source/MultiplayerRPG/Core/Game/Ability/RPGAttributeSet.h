@@ -24,6 +24,10 @@ public:
 	FGameplayAttributeData Health;
 	PROPERTY_FUNCTION_REGISTRATION(URPGAttributeSet, Health);
 
+	UPROPERTY(BlueprintReadOnly, Category = "Attribute", ReplicatedUsing = OnRep_MaxHealth)
+	FGameplayAttributeData MaxHealth;
+	PROPERTY_FUNCTION_REGISTRATION(URPGAttributeSet, MaxHealth);
+
 	UPROPERTY(BlueprintReadOnly, Category = "Attribute", ReplicatedUsing = OnRep_Mana)
 	FGameplayAttributeData Mana;
 	PROPERTY_FUNCTION_REGISTRATION(URPGAttributeSet, Mana);
@@ -35,6 +39,9 @@ public:
 protected:
 	UFUNCTION()
 	virtual void OnRep_Health(const FGameplayAttributeData& OldValue);
+
+	UFUNCTION()
+	virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldValue);
 
 	UFUNCTION()
 	virtual void OnRep_Mana(const FGameplayAttributeData& OldValue);

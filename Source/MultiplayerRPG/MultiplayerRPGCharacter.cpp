@@ -57,10 +57,7 @@ AMultiplayerRPGCharacter::AMultiplayerRPGCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
 
-	AbilitySystemComponent = CreateDefaultSubobject<URPGAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
-	AbilitySystemComponent->SetIsReplicated(true);
 
-	RPGAttributeSet = CreateDefaultSubobject<URPGAttributeSet>(TEXT("RPGAttributeSet"));
 
 
 
@@ -72,14 +69,6 @@ void AMultiplayerRPGCharacter::BeginPlay()
 {
 
 	Super::BeginPlay();
-	if (AbilitySystemComponent && GetLocalRole() == ENetRole::ROLE_Authority) 
-	{
-		AbilitySystemComponent->InitAbilityActorInfo(this, this);
-	}
-
-	TArray<UAttributeSet*> RPGAttributeSets;
-	RPGAttributeSets.Add(Cast<UAttributeSet>(RPGAttributeSet));
-	AbilitySystemComponent->SetSpawnedAttributes(RPGAttributeSets);
 
 
 	if (ARPGGameState* GameState = GetWorld()->GetGameState<ARPGGameState>()) 
