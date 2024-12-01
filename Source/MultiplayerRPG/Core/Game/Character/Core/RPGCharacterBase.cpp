@@ -15,25 +15,25 @@
 
 #include "../../Ability/RPGAbilitySystemComponent.h"
 #include "../../Ability/RPGAttributeSet.h"
-#include "../../UI/HealthyBar/UI_EnemyHealthyBar.h"
+#include "../../RPGGameState.h"
+#include "MultiplayerRPG/UI/HealthyBar/UI_EnemyHealthyBar.h"
 
 // Sets default values
 ARPGCharacterBase::ARPGCharacterBase()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	EnemyHealthyBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("EnemyHealthyBar"));
+	EnemyHealthyBar->SetupAttachment(RootComponent);
+	EnemyHealthyBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	AbilitySystemComponent = CreateDefaultSubobject<URPGAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 
 	RPGAttributeSet = CreateDefaultSubobject<URPGAttributeSet>(TEXT("RPGAttributeSet"));
-
-	EnemyHealthyBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("EnemyHealthyBar"));
-	EnemyHealthyBar->SetupAttachment(RootComponent);
-	EnemyHealthyBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-void ARPGCharacterBase::HandleHealthChanged(float InHealthPercent)
+void ARPGCharacterBase::HandleHealthChanged_Implementation(float InHealthPercent)
 {
 	if (EnemyHealthyBar) 
 	{
@@ -58,6 +58,16 @@ void ARPGCharacterBase::BeginPlay()
 	RPGAttributeSets.Add(Cast<UAttributeSet>(RPGAttributeSet));
 	AbilitySystemComponent->SetSpawnedAttributes(RPGAttributeSets);
 
+	if (ARPGGameState* GameState = GetWorld()->GetGameState<ARPGGameState>())
+	{
+		TArray<UGameplayAbility*> Abilities = GameState->GetCharacterSkills(1);
+
+		RegisterGameAbility(Abilities);
+	}
+
+
+
+	HandleHealthChanged(RPGAttributeSet->GetHealth() / RPGAttributeSet->GetMaxHealth());
 }
 
 // Called every frame
@@ -73,4 +83,25 @@ void ARPGCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
+
+
+FGameplayAbilitySpecHandle ARPGCharacterBase::RegisterGameAbility(TArray<UGameplayAbility*> InAbilities)
+{
+	if (GetLocalRole() == ENetRole::ROLE_Authority)
+	{
+		if (AbilitySystemComponent && InAbilities.Num() > 0)
+		{
+			for (auto Tmp : InAbilities)
+			{
+				FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Tmp));
+				const FString String = Tmp->AbilityTags.ToStringSimple();
+				Skills.Add(FName(String), Handle);
+			}
+		}
+	}
+
+	return FGameplayAbilitySpecHandle();
+
+}
+
 

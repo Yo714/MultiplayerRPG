@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "../../Ability/RPGAbilitySystemComponent.h"
+#include "../../Ability/RPGAttributeSet.h"
 #include "RPGCharacterBase.generated.h"
 
 class URPGAbilitySystemComponent;
@@ -15,7 +17,7 @@ class MULTIPLAYERRPG_API ARPGCharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
-protected:
+public:
 	//GAS
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = RPGCharacter, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<URPGAbilitySystemComponent> AbilitySystemComponent;
@@ -31,7 +33,10 @@ public:
 	// Sets default values for this character's properties
 	ARPGCharacterBase();
 
-	void HandleHealthChanged(float InHealthPercent);
+	FGameplayAbilitySpecHandle RegisterGameAbility(TArray<UGameplayAbility*> InAbilities);
+
+	UFUNCTION(NetMulticast, Unreliable)
+	virtual void HandleHealthChanged(float InHealthPercent);
 
 protected:
 	// Called when the game starts or when spawned
@@ -44,6 +49,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	
-	
+
+protected:
+	TMap<FName, FGameplayAbilitySpecHandle> Skills;
+
 };
