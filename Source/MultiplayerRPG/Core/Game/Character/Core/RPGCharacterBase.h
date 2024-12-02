@@ -6,18 +6,23 @@
 #include "GameFramework/Character.h"
 #include "../../Ability/RPGAbilitySystemComponent.h"
 #include "../../Ability/RPGAttributeSet.h"
+#include "../../Component/FightComponent.h"
 #include "RPGCharacterBase.generated.h"
 
 class URPGAbilitySystemComponent;
 class URPGAttributeSet;
 class UGameplayAbility;
 class UWidgetComponent;
+class UFightComponent;
 UCLASS()
 class MULTIPLAYERRPG_API ARPGCharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = RPGCharacter, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UFightComponent> FightComponent;
+
 	//GAS
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = RPGCharacter, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<URPGAbilitySystemComponent> AbilitySystemComponent;
@@ -33,10 +38,15 @@ public:
 	// Sets default values for this character's properties
 	ARPGCharacterBase();
 
-	FGameplayAbilitySpecHandle RegisterGameAbility(TArray<UGameplayAbility*> InAbilities);
-
-	UFUNCTION(NetMulticast, Unreliable)
+	UFUNCTION(NetMulticast, Reliable)
 	virtual void HandleHealthChanged(float InHealthPercent);
+
+public:
+	FORCEINLINE UFightComponent* GetFightComponent() { return FightComponent; }
+	FORCEINLINE URPGAbilitySystemComponent* GetAbilitySystemComponent() { return AbilitySystemComponent; }
+
+	UFUNCTION(BlueprintCallable)
+	bool IsAlive();
 
 protected:
 	// Called when the game starts or when spawned
@@ -49,8 +59,19 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable)
+	void K2_ActiveSkill(FGameplayTag SkillName);
 
-protected:
-	TMap<FName, FGameplayAbilitySpecHandle> Skills;
+	UFUNCTION(Server, Reliable)
+	void ActiveSkill(FGameplayTag SkillName);
+
+	UFUNCTION(Server, Reliable)
+	void ActiveSkillByString(const FString& SkillName);
+
+	UFUNCTION(Server, Reliable)
+	void PlayHit();
+
+	UFUNCTION(Server, Reliable)
+	void PlayDie();
 
 };

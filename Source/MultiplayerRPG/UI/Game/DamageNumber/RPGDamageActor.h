@@ -12,6 +12,9 @@ class MULTIPLAYERRPG_API ARPGDamageActor : public AActor
 {
 	GENERATED_BODY()
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HitCollision", meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* DamageNumRootComponent;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UWidgetComponent* DamageWidget;
 

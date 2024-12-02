@@ -17,6 +17,8 @@
 #include "../../Ability/RPGAttributeSet.h"
 #include "../../RPGGameState.h"
 #include "MultiplayerRPG/UI/HealthyBar/UI_EnemyHealthyBar.h"
+#include <MultiplayerRPG/Common/RPGMethodUntil.h>
+#include "../../Component/FightComponent.h"
 
 // Sets default values
 ARPGCharacterBase::ARPGCharacterBase()
@@ -26,6 +28,9 @@ ARPGCharacterBase::ARPGCharacterBase()
 	EnemyHealthyBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("EnemyHealthyBar"));
 	EnemyHealthyBar->SetupAttachment(RootComponent);
 	EnemyHealthyBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	FightComponent = CreateDefaultSubobject<UFightComponent>(TEXT("FightComponent"));
+	FightComponent->SetIsReplicated(true);
 
 	AbilitySystemComponent = CreateDefaultSubobject<URPGAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
@@ -44,6 +49,11 @@ void ARPGCharacterBase::HandleHealthChanged_Implementation(float InHealthPercent
 	}
 }
 
+bool ARPGCharacterBase::IsAlive()
+{
+	return RPGAttributeSet->GetHealth() > 0;
+}
+
 // Called when the game starts or when spawned
 void ARPGCharacterBase::BeginPlay()
 {
@@ -55,16 +65,8 @@ void ARPGCharacterBase::BeginPlay()
 	}
 
 	TArray<UAttributeSet*> RPGAttributeSets;
-	RPGAttributeSets.Add(Cast<UAttributeSet>(RPGAttributeSet));
+	RPGAttributeSets.Add(RPGAttributeSet);
 	AbilitySystemComponent->SetSpawnedAttributes(RPGAttributeSets);
-
-	if (ARPGGameState* GameState = GetWorld()->GetGameState<ARPGGameState>())
-	{
-		TArray<UGameplayAbility*> Abilities = GameState->GetCharacterSkills(1);
-
-		RegisterGameAbility(Abilities);
-	}
-
 
 
 	HandleHealthChanged(RPGAttributeSet->GetHealth() / RPGAttributeSet->GetMaxHealth());
@@ -84,24 +86,29 @@ void ARPGCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 }
 
-
-FGameplayAbilitySpecHandle ARPGCharacterBase::RegisterGameAbility(TArray<UGameplayAbility*> InAbilities)
+void ARPGCharacterBase::K2_ActiveSkill(FGameplayTag SkillName)
 {
-	if (GetLocalRole() == ENetRole::ROLE_Authority)
-	{
-		if (AbilitySystemComponent && InAbilities.Num() > 0)
-		{
-			for (auto Tmp : InAbilities)
-			{
-				FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Tmp));
-				const FString String = Tmp->AbilityTags.ToStringSimple();
-				Skills.Add(FName(String), Handle);
-			}
-		}
-	}
+	ActiveSkill(SkillName);
+}
 
-	return FGameplayAbilitySpecHandle();
+void ARPGCharacterBase::PlayHit_Implementation()
+{
+	GetFightComponent()->PlayHit();
+}
 
+void ARPGCharacterBase::PlayDie_Implementation()
+{
+	GetFightComponent()->PlayDie();
+}
+
+void ARPGCharacterBase::ActiveSkillByString_Implementation(const FString& SkillName)
+{
+	GetFightComponent()->ActiveSkill(SkillName);
+}
+
+void ARPGCharacterBase::ActiveSkill_Implementation(FGameplayTag SkillName)
+{
+	GetFightComponent()->ActiveSkill(SkillName);
 }
 
 

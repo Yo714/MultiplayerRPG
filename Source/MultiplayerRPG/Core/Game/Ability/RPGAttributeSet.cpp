@@ -7,6 +7,7 @@
 #include "../Character/Core/RPGCharacterBase.h"
 #include "GameplayEffectExtension.h"
 #include <MultiplayerRPG/Core/Game/Character/MultiplayerRPGCharacter.h>
+#include "../../../Common/RPGMethodUntil.h"
 
 URPGAttributeSet::URPGAttributeSet()
 	:Damage(0.f)
@@ -30,10 +31,9 @@ void URPGAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 	UAbilitySystemComponent* Source = Context.GetOriginalInstigatorAbilitySystemComponent();
 	const FGameplayTagContainer& SourceTags = *Data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
 
-	float DeltaValue = 0;
 	if (Data.EvaluatedData.ModifierOp == EGameplayModOp::Type::Additive) 
 	{
-		DeltaValue = Data.EvaluatedData.Magnitude;
+		Damage = Data.EvaluatedData.Magnitude;
 	}
 
 	AActor* TargetActor = nullptr;
@@ -56,6 +56,11 @@ void URPGAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 			if (AMultiplayerRPGCharacter* Character = Cast<AMultiplayerRPGCharacter>(TargetCharacter)) 
 			{
 				Character->UpdateHealth(GetHealth() / GetMaxHealth());
+
+				if (GetHealth() <= 0.f) 
+				{
+					Character->PlayDie();
+				}
 			}
 		}
 	}

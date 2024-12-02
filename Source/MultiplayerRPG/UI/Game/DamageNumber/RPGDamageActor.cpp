@@ -9,11 +9,15 @@
 // Sets default values
 ARPGDamageActor::ARPGDamageActor()
 {
+	DamageNumRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("DamageNumRootComponent"));
+	RootComponent = DamageNumRootComponent;
+
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	DamageWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("DamageWidget"));
 	DamageWidget->SetupAttachment(RootComponent);
 	DamageWidget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	DamageWidget->SetHiddenInGame(true);
 }
 
 void ARPGDamageActor::UpdateDamageNum(const FText& InText)
@@ -22,6 +26,7 @@ void ARPGDamageActor::UpdateDamageNum(const FText& InText)
 	{
 		if (UUI_DamageNumber* DamageNum = Cast<UUI_DamageNumber>(DamageWidget->GetUserWidgetObject())) 
 		{
+			DamageWidget->SetHiddenInGame(false);
 			DamageNum->UpdateDamage(InText);
 		}
 	}	

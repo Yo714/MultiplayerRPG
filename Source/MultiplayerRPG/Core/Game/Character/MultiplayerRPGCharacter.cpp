@@ -15,7 +15,8 @@
 #include "Components/WidgetComponent.h"
 #include <TimerManager.h>
 #include "../../../Common/RPGMethodUntil.h"
-
+#include "../Component/FightComponent.h"
+	
 
 //DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -65,13 +66,12 @@ AMultiplayerRPGCharacter::AMultiplayerRPGCharacter()
 
 
 
-
 }
 
 void AMultiplayerRPGCharacter::UpdateHealth_Implementation(float InPercent)
 {
-	RPGMethodUntil::SpawnDamageNum(this, 10);
 	UpdateHealthProgress.ExecuteIfBound(InPercent);
+	RPGMethodUntil::SpawnDamageNum(this, RPGAttributeSet->GetDamage());
 }
 
 void AMultiplayerRPGCharacter::UpdateMana_Implementation(float InPercent)
@@ -115,21 +115,14 @@ void AMultiplayerRPGCharacter::BeginPlay()
 	}
 }
 
-
-void AMultiplayerRPGCharacter::K2_ActiveSkill(FGameplayTag SkillName)
+void AMultiplayerRPGCharacter::ComboAttackOnPressed_Implementation()
 {
-	ActiveSkill(SkillName);
+	GetFightComponent()->ComboAttackOnPressed();
 }
 
-void AMultiplayerRPGCharacter::ActiveSkill_Implementation(FGameplayTag SkillName)
+void AMultiplayerRPGCharacter::ComboAttackOnReleased_Implementation()
 {
-	if (AbilitySystemComponent)
-	{
-		if (const FGameplayAbilitySpecHandle* Handle = Skills.Find(FName(*SkillName.ToString())))
-		{
-			AbilitySystemComponent->TryActivateAbility(*Handle);
-		}
-	}
+	GetFightComponent()->ComboAttackOnReleased();
 }
 
 void AMultiplayerRPGCharacter::K2_MontagePlayServer(UAnimMontage* InNewAnimMontage, float InPlayRate, float InTimeToStartMontageAt, bool bStopAllMontages, FName InStartSectionName)
@@ -193,6 +186,10 @@ void AMultiplayerRPGCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMultiplayerRPGCharacter::Look);
+
+		//ComboAttack
+		PlayerInputComponent->BindAction("ComboAttack", IE_Pressed, this, &AMultiplayerRPGCharacter::ComboAttackOnPressed);
+		PlayerInputComponent->BindAction("ComboAttack", IE_Released, this, &AMultiplayerRPGCharacter::ComboAttackOnReleased);
 	}
 	else
 	{

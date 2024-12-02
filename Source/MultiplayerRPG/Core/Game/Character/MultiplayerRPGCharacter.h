@@ -52,7 +52,6 @@ class AMultiplayerRPGCharacter : public ARPGCharacterBase
 	UInputAction* LookAction;
 
 
-
 public: 
 	AMultiplayerRPGCharacter();
 
@@ -77,11 +76,13 @@ protected:
 protected:
 	void BeginPlay();
 
-	UFUNCTION(BlueprintCallable)
-	void K2_ActiveSkill(FGameplayTag SkillName);
 
-	UFUNCTION(Server, UnReliable)
-	void ActiveSkill(FGameplayTag SkillName);
+public:
+	UFUNCTION(Server, Reliable)
+	void ComboAttackOnPressed();
+
+	UFUNCTION(Server, Reliable)
+	void ComboAttackOnReleased();
 
 	UFUNCTION(BlueprintCallable)
 	void K2_MontagePlayServer(UAnimMontage* InNewAnimMontage, float InPlayRate = 1.0f, float InTimeToStartMontageAt = 0.f, bool bStopAllMontages = true, FName InStartSectionName = NAME_None);
