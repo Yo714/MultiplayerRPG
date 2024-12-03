@@ -11,6 +11,7 @@ URPGAbilityTask_PMAW::URPGAbilityTask_PMAW()
 
 }
 
+// Activate the task and start listening for gameplay events.
 void URPGAbilityTask_PMAW::Activate()
 {
 	if (Ability == nullptr)
@@ -20,11 +21,13 @@ void URPGAbilityTask_PMAW::Activate()
 
 	if (AbilitySystemComponent.IsValid())
 	{
+		// Get the animation instance from the actor info.
 		const FGameplayAbilityActorInfo* ActorInfo = Ability->GetCurrentActorInfo();
 		UAnimInstance* AnimInstance = ActorInfo->GetAnimInstance();
 
 		if (AnimInstance != nullptr)
 		{
+			// Register a delegate for gameplay events associated with the specified tags.
 			EventHandle = AbilitySystemComponent->AddGameplayEventTagContainerDelegate(
 				EventTags,
 				FGameplayEventTagMulticastDelegate::FDelegate::CreateUObject(this, &URPGAbilityTask_PMAW::OnDamageGameplayEvent));
@@ -34,16 +37,19 @@ void URPGAbilityTask_PMAW::Activate()
 	Super::Activate();
 }
 
+// Called when the task is destroyed to clean up resources.
 void URPGAbilityTask_PMAW::OnDestroy(bool AbilityEnded)
 {
 	if (AbilitySystemComponent.IsValid())
 	{
+		// Remove the registered gameplay event delegate.
 		AbilitySystemComponent->RemoveGameplayEventTagContainerDelegate(EventTags, EventHandle);
 	}
 
 	Super::OnDestroy(AbilityEnded);
 }
 
+// Factory method for creating an instance of this ability task.
 URPGAbilityTask_PMAW* URPGAbilityTask_PMAW::CreatePMAWDamegeEventProxy(UGameplayAbility* OwningAbility, FName TaskInstanceName, UAnimMontage* MontageToPlay, FGameplayTagContainer InEventTags, float Rate, FName StartSection, bool bStopWhenAbilityEnds, float AnimRootMotionTranslationScale, float StartTimeSeconds)
 {
 	UAbilitySystemGlobals::NonShipping_ApplyGlobalAbilityScaler_Rate(Rate);
@@ -60,6 +66,7 @@ URPGAbilityTask_PMAW* URPGAbilityTask_PMAW::CreatePMAWDamegeEventProxy(UGameplay
 	return MyObj;
 }
 
+// Callback for handling gameplay events when they occur.
 void URPGAbilityTask_PMAW::OnDamageGameplayEvent(FGameplayTag InGameplayTag, const FGameplayEventData* Payload)
 {
 	if (ShouldBroadcastAbilityTaskDelegates()) 

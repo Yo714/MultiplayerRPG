@@ -24,35 +24,43 @@ void UFightComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Get the owner of this component and cast it to ARPGCharacterBase
 	RPGCharacterBase = Cast<ARPGCharacterBase>(GetOwner());
 
+	// If the RPGCharacterBase is valid, initialize the AbilitySystemComponent
 	if (RPGCharacterBase.IsValid()) 
 	{
 		AbilitySystemComponent = Cast<URPGAbilitySystemComponent>(RPGCharacterBase->GetAbilitySystemComponent());
 	}
 
+	// Register the character's abilities from the game state
 	if (ARPGGameState* GameState = GetWorld()->GetGameState<ARPGGameState>())
 	{
+		// Get a list of abilities for character ID 1 (this could be expanded for multiple characters)
 		TArray<UGameplayAbility*> Abilities = GameState->GetCharacterSkills(1);
 
+		// Register those abilities with the component
 		RegisterGameAbility(Abilities);
 	}
 
 }
 
+// Registers abilities for the character and binds them to the AbilitySystemComponent
 FGameplayAbilitySpecHandle UFightComponent::RegisterGameAbility(TArray<UGameplayAbility*> InAbilities)
 {
+	// Ensure the server has authority to grant abilities
 	if (GetOwner()->GetLocalRole() == ENetRole::ROLE_Authority)
 	{
 		if (AbilitySystemComponent.IsValid() && InAbilities.Num() > 0)
 		{
+			// Iterate through the abilities and assign them to the character
 			for (auto& Tmp : InAbilities)
 			{
 				FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Tmp));
 				const FString String = Tmp->AbilityTags.ToStringSimple();
 				Skills.Add(FName(String), Handle);
 
-
+				// Check for combo attack ability and initialize combo-related variables
 				if (String.Equals("Character.Skill.ComboAttack"))
 				{
 					ComboCheck.Character = Cast<AMultiplayerRPGCharacter>(RPGCharacterBase.Get());
@@ -76,15 +84,18 @@ void UFightComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	// ...
 }
 
+// Activates a skill based on its GameplayTag
 void UFightComponent::ActiveSkill(FGameplayTag SkillName)
 {
 	ActiveSkill(SkillName.ToString());
 }
 
+// Activates a skill based on its string name
 void UFightComponent::ActiveSkill(FString SkillName)
 {
 	if (AbilitySystemComponent.IsValid())
 	{
+		// Look up the skill in the map and try to activate it
 		if (const FGameplayAbilitySpecHandle* Handle = Skills.Find(FName(SkillName)))
 		{
 			AbilitySystemComponent->TryActivateAbility(*Handle);
@@ -92,11 +103,13 @@ void UFightComponent::ActiveSkill(FString SkillName)
 	}
 }
 
+// Plays the "Hit" animation state
 void UFightComponent::PlayHit()
 {
 	ActiveSkill("Character.State.Hit");
 }
 
+// Plays the "Die" animation state
 void UFightComponent::PlayDie()
 {
 	ActiveSkill("Character.State.Die");
@@ -117,6 +130,7 @@ void UFightComponent::ResetComboCheck()
 	ComboCheck.Reset();
 }
 
+// FComboCheck constructor to initialize combo states
 FComboCheck::FComboCheck()
 	:ComboIndex(INDEX_NONE)
 	,bLongPress(false)
@@ -126,16 +140,19 @@ FComboCheck::FComboCheck()
 {
 }
 
+// Called when the combo attack button is pressed
 void FComboCheck::Press()
 {
 	if (ComboIndex == INDEX_NONE && Character != NULL)
 	{
 		ComboIndex++;
 
+		// Ensure the character exists before proceeding
 		check(Character);
 
 		if (Character) 
 		{
+			// Activate the combo attack ability on the character
 			Character->GetFightComponent()->ActiveSkill("Character.Skill.ComboAttack");
 		}
 	}

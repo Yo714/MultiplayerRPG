@@ -68,24 +68,33 @@ AMultiplayerRPGCharacter::AMultiplayerRPGCharacter()
 
 }
 
+// Updates the health UI and spawns a damage number
 void AMultiplayerRPGCharacter::UpdateHealth_Implementation(float InPercent)
 {
+	// Bind and call the UI update function
 	UpdateHealthProgress.ExecuteIfBound(InPercent);
+	// Spawn damage number
 	RPGMethodUntil::SpawnDamageNum(this, RPGAttributeSet->GetDamage());
 }
 
+// Updates the mana 
 void AMultiplayerRPGCharacter::UpdateMana_Implementation(float InPercent)
 {
+	// Bind and call the mana progress update function
 	UpdateManaProgress.ExecuteIfBound(InPercent);
 }
 
+// Updates the stamina UI
 void AMultiplayerRPGCharacter::UpdateStamina_Implementation(float InPercent)
 {
+	// Bind and call the stamina progress update function
 	UpdateStaminaProgress.ExecuteIfBound(InPercent);
 }
 
+// Updates all progress bars (health, mana, stamina) at once
 void AMultiplayerRPGCharacter::UpdateProgress()
 {
+	// Clear any existing timers
 	GetWorldTimerManager().ClearTimer(UpdateProgressHandle);
 
 	UpdateHealth(1);
@@ -98,6 +107,7 @@ void AMultiplayerRPGCharacter::BeginPlay()
 
 	Super::BeginPlay();
 
+	// Set visibility of enemy health bar based on player role (server/client)
 	if (GetLocalRole() != ENetRole::ROLE_Authority)
 	{
 		if (EnemyHealthyBar)
@@ -109,22 +119,26 @@ void AMultiplayerRPGCharacter::BeginPlay()
 		}
 	}
 
+	// Set up timer to update progress on the server
 	if (GetLocalRole() == ENetRole::ROLE_Authority)
 	{
 		GetWorld()->GetTimerManager().SetTimer(UpdateProgressHandle, this, &AMultiplayerRPGCharacter::UpdateProgress, 1.0, false, 0.3);
 	}
 }
 
+// Handles combo attack press event
 void AMultiplayerRPGCharacter::ComboAttackOnPressed_Implementation()
 {
 	GetFightComponent()->ComboAttackOnPressed();
 }
 
+// Handles combo attack release event
 void AMultiplayerRPGCharacter::ComboAttackOnReleased_Implementation()
 {
 	GetFightComponent()->ComboAttackOnReleased();
 }
 
+// Server-side implementation of montage playing logic
 void AMultiplayerRPGCharacter::K2_MontagePlayServer(UAnimMontage* InNewAnimMontage, float InPlayRate, float InTimeToStartMontageAt, bool bStopAllMontages, FName InStartSectionName)
 {
 	MontagePlayServer(InNewAnimMontage, InPlayRate, InTimeToStartMontageAt, bStopAllMontages, InStartSectionName);

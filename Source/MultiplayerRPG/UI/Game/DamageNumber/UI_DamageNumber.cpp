@@ -6,11 +6,14 @@
 
 void UUI_DamageNumber::NativeConstruct() 
 {
+	// Play the fade animation when the widget is constructed (this could be an animation for fading the damage number)
 	PlayWidgetAnim(TEXT("FadeAnimation"));
 }
 
+// Updates the displayed damage text in the UI
 void UUI_DamageNumber::UpdateDamage(const FText& InText)
 {
+	// Set the TextBlock's text to the new damage value
 	DamageNum->SetText(InText);
 }
 

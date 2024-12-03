@@ -6,6 +6,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "RPGAbilityTask_PMAW.generated.h"
 
+// Delegate for broadcasting damage events with an associated tag and event data.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMontageWaitSimpleForDamageEventDelegate, FGameplayTag, EventTag, FGameplayEventData, EventData);
 /**
  * 
