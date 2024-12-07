@@ -19,9 +19,8 @@ ARPGHitBox::ARPGHitBox(const FObjectInitializer& ObjectInitializer)
 	HitDamage = CreateDefaultSubobject<UBoxComponent>(TEXT("HitDamage"));
 	HitDamage->SetupAttachment(RootComponent);
 
-	// Set the initial lifespan of the hitbox actor to 4 seconds
-	InitialLifeSpan = 4.f;
-	// Disable network replication and loading on client
+	// Set the initial lifespan of the hitbox actor to 0.2 seconds
+	InitialLifeSpan = 0.2f;
 	bNetLoadOnClient = false;
 	bReplicates = false;
 }
@@ -101,7 +100,7 @@ void ARPGHitBox::BeginPlay()
 	// If the hit damage component is valid, make it visible and bind the damage handler function
 	if (UPrimitiveComponent* InHitComponent = GetHitDamage())
 	{
-		InHitComponent->SetHiddenInGame(false);
+		InHitComponent->SetHiddenInGame(true);
 		InHitComponent->OnComponentBeginOverlap.AddDynamic(this, &ARPGHitBox::HandleDamage);// Bind the overlap event to the damage handler
 	}
 
@@ -110,6 +109,7 @@ void ARPGHitBox::BeginPlay()
 // Called every frame
 void ARPGHitBox::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
 }
 
 // Checks if the target has already been attacked by this hitbox
@@ -120,7 +120,10 @@ bool ARPGHitBox::IsExist(ACharacter* InNewTarget) const
 	{
 		if (Tmp.IsValid())
 		{
-			return true;
+			if (Tmp == InNewTarget)
+			{
+				return true;
+			}
 		}
 	}
 

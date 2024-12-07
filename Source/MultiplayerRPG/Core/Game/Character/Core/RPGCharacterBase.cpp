@@ -102,6 +102,11 @@ void ARPGCharacterBase::K2_ActiveSkill(FGameplayTag SkillName)
 	ActiveSkill(SkillName);
 }
 
+void ARPGCharacterBase::CallUpdateCooldownOnClient_Implementation(const FName& InTagName, float InCooldownValue)
+{
+	UpdateSkillCooldownDelegate.ExecuteIfBound(InTagName, InCooldownValue);
+}
+
 // Plays the "hit" animation or response for the character.
 void ARPGCharacterBase::PlayHit_Implementation()
 {

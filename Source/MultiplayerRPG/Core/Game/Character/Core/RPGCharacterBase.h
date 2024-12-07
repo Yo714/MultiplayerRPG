@@ -14,6 +14,8 @@ class URPGAttributeSet;
 class UGameplayAbility;
 class UWidgetComponent;
 class UFightComponent;
+
+DECLARE_DELEGATE_TwoParams(FUpdateSkillCooldownDelegate, const FName&, float)
 UCLASS()
 class MULTIPLAYERRPG_API ARPGCharacterBase : public ACharacter
 {
@@ -44,6 +46,7 @@ public:
 public:
 	FORCEINLINE UFightComponent* GetFightComponent() { return FightComponent; }
 	FORCEINLINE URPGAbilitySystemComponent* GetAbilitySystemComponent() { return AbilitySystemComponent; }
+	FORCEINLINE int32 GetCharacterID() { return CharacterID; }
 
 	UFUNCTION(BlueprintCallable)
 	bool IsAlive();
@@ -68,10 +71,20 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ActiveSkillByString(const FString& SkillName);
 
+	UFUNCTION(Client, Reliable)
+	void CallUpdateCooldownOnClient(const FName& InTagName, float InCooldownValue);
+
 	UFUNCTION(Server, Reliable)
 	void PlayHit();
 
 	UFUNCTION(Server, Reliable)
 	void PlayDie();
+
+public:
+	FUpdateSkillCooldownDelegate UpdateSkillCooldownDelegate;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = RPGCharacter, meta = (AllowPrivateAccess = "true"))
+	int32 CharacterID;
 
 };

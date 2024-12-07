@@ -22,6 +22,8 @@ public:
 	ARPGGameState();
 
 	TArray<UGameplayAbility*> GetCharacterSkills(int32 InCharacterID);
+
+	TArray<FSkillDataTable*> GetCharacterSkillTables(int32 InCharacterID);
 	TArray<FSkillDataTable*>* GetCharacterSkillTables();
 
 protected:

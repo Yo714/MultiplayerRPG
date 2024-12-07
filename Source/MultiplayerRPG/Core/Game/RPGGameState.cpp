@@ -35,6 +35,24 @@ TArray<UGameplayAbility*> ARPGGameState::GetCharacterSkills(int32 InCharacterID)
 	return Skills;
 }
 
+TArray<FSkillDataTable*> ARPGGameState::GetCharacterSkillTables(int32 InCharacterID)
+{
+	TArray<FSkillDataTable*> SkillTables;
+
+	if (GetCharacterSkillTables()->Num() > 0)
+	{
+		for (auto& Tmp : SkillDataTables) 
+		{
+			if (Tmp->CharacterID == InCharacterID)
+			{
+				SkillTables.Add(Tmp);
+			}
+		}
+	}
+
+	return SkillTables;
+}
+
 // Function to load and return all skill data tables
 TArray<FSkillDataTable*>* ARPGGameState::GetCharacterSkillTables()
 {

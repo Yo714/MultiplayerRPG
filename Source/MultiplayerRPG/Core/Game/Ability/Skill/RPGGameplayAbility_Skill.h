@@ -24,5 +24,6 @@ public:
 		const FGameplayAbilityActivationInfo ActivationInfo,
 		const FGameplayEventData* TriggerEventData);
 	
+	void CallUpdateCooldownOnClient();
 	
 };

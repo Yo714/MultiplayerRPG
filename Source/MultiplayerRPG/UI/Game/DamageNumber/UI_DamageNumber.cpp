@@ -13,8 +13,11 @@ void UUI_DamageNumber::NativeConstruct()
 // Updates the displayed damage text in the UI
 void UUI_DamageNumber::UpdateDamage(const FText& InText)
 {
-	// Set the TextBlock's text to the new damage value
-	DamageNum->SetText(InText);
+	if (DamageNum) 
+	{
+		// Set the TextBlock's text to the new damage value
+		DamageNum->SetText(InText);
+	}
 }
 
 

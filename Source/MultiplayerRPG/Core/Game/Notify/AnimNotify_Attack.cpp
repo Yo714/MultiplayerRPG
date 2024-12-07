@@ -9,9 +9,9 @@ UAnimNotify_Attack::UAnimNotify_Attack()
 {
 	// Set default values for this notify's properties
 	HitObjectClass = ARPGHitBox::StaticClass();
-	BoxExtent = FVector(32.f);
-	LifeTime = 4.0f;
-	InSocketName = TEXT("OpenFire");
+	BoxExtent = FVector(150.f);
+	LifeTime = 0.2f;
+	InSocketName = TEXT("Attack");
 }
 
 // Returns the name of this animation notify, typically shown in the animation editor
