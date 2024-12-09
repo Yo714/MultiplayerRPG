@@ -16,7 +16,13 @@ public class MultiplayerRPG : ModuleRules
 			"EnhancedInput",
 			"GameplayAbilities",
 			"GameplayTasks",
-			"GameplayTags"
+			"GameplayTags",
+			"Slate",
+			"SlateCore",
+			"HTTP",
+			"JsonUtilities",
+			"Json",
+
 		});
 	}
 }

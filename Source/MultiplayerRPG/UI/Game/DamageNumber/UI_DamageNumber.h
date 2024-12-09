@@ -16,11 +16,11 @@ class MULTIPLAYERRPG_API UUI_DamageNumber : public UUI_Base
 	GENERATED_BODY()
 	
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* DamageNum;
+	UTextBlock* NumText;
 
 public:
 	virtual void NativeConstruct();
 
-	void UpdateDamage(const FText& InText);
-	
+	void UpdateNum(const FText& InText);
+	void UpdateNumColor(const FLinearColor& InColor);
 };

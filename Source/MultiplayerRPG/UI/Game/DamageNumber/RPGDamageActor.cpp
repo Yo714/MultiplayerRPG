@@ -24,7 +24,7 @@ ARPGDamageActor::ARPGDamageActor()
 }
 
 // Updates the damage number displayed by the widget
-void ARPGDamageActor::UpdateDamageNum(const FText& InText)
+void ARPGDamageActor::UpdateNum(const FText& InText)
 {
 	// Check if the widget component is valid
 	if (DamageWidget)
@@ -35,9 +35,23 @@ void ARPGDamageActor::UpdateDamageNum(const FText& InText)
 			// Make the widget visible in the game
 			DamageWidget->SetHiddenInGame(false);
 			// Update the damage text on the widget
-			DamageNum->UpdateDamage(InText);
+			DamageNum->UpdateNum(InText);
 		}
 	}	
+}
+
+void ARPGDamageActor::UpdateNumColor(const FLinearColor& InColor)
+{
+	if (DamageWidget)
+	{
+		if (UUI_DamageNumber* DamageNum = Cast<UUI_DamageNumber>(DamageWidget->GetUserWidgetObject()))
+		{
+			// Make the widget visible in the game
+			DamageWidget->SetHiddenInGame(false);
+			// Update the damage text on the widget
+			DamageNum->UpdateNumColor(InColor);
+		}
+	}
 }
 
 // Called when the game starts or when spawned

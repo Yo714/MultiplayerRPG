@@ -11,12 +11,19 @@ void UUI_SkillPanel::NativeConstruct()
 	Super::NativeConstruct();
 	LayoutSlot();
 
-	if (APlayerController* InPlayerController = GetWorld()->GetFirstPlayerController<APlayerController>())
+	if (ARPGCharacterBase* InCharacter = UI_GetRPGCharacterBase())
 	{
-		if (ARPGCharacterBase* InCharacter = InPlayerController->GetPawn<ARPGCharacterBase>())
-		{
-			InCharacter->UpdateSkillCooldownDelegate.BindUObject(this, &UUI_SkillPanel::UpdateSkillCD);
-		}
+		InCharacter->UpdateSkillCooldownDelegate.BindUObject(this, &UUI_SkillPanel::UpdateSkillCD);
+	}
+}
+
+void UUI_SkillPanel::NativeDestruct()
+{
+	Super::NativeDestruct();
+
+	if (ARPGCharacterBase* InCharacter = UI_GetRPGCharacterBase())
+	{
+		InCharacter->UpdateSkillCooldownDelegate.Unbind();
 	}
 }
 

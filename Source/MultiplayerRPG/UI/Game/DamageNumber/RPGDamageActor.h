@@ -23,7 +23,8 @@ public:
 	// Sets default values for this actor's properties
 	ARPGDamageActor();
 
-	void UpdateDamageNum(const FText& InText);
+	void UpdateNum(const FText& InText);
+	void UpdateNumColor(const FLinearColor& InColor);
 
 protected:
 	// Called when the game starts or when spawned

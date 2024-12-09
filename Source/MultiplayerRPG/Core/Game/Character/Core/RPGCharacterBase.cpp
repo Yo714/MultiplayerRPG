@@ -102,6 +102,11 @@ void ARPGCharacterBase::K2_ActiveSkill(FGameplayTag SkillName)
 	ActiveSkill(SkillName);
 }
 
+void ARPGCharacterBase::SpawnDamageNum_Implementation(AActor* InActor, float InNum, const FLinearColor& InColor)
+{
+	RPGMethodUntil::SpawnDamageNum(InActor, InNum, InColor);
+}
+
 void ARPGCharacterBase::CallUpdateCooldownOnClient_Implementation(const FName& InTagName, float InCooldownValue)
 {
 	UpdateSkillCooldownDelegate.ExecuteIfBound(InTagName, InCooldownValue);

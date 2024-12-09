@@ -21,7 +21,7 @@ void UUI_GameMain::NativeConstruct()
 	Super::NativeConstruct();
 
 	// Get the player character (assuming it's the first player in the world)
-	if (AMultiplayerRPGCharacter* PlayerCharacter = Cast<AMultiplayerRPGCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn()))
+	if (AMultiplayerRPGCharacter* PlayerCharacter = Cast<AMultiplayerRPGCharacter>(UI_GetRPGCharacterBase()))
 	{
 		// Bind functions to update health, mana, and stamina progress bars
 		PlayerCharacter->UpdateHealthProgress.BindUObject(this, &UUI_GameMain::UpdateHealthProgress);
@@ -33,6 +33,14 @@ void UUI_GameMain::NativeConstruct()
 void UUI_GameMain::NativeDestruct()
 {
 	Super::NativeDestruct();
+
+	if (AMultiplayerRPGCharacter* PlayerCharacter = Cast<AMultiplayerRPGCharacter>(UI_GetRPGCharacterBase()))
+	{
+		// Bind functions to update health, mana, and stamina progress bars
+		PlayerCharacter->UpdateHealthProgress.Unbind();
+		PlayerCharacter->UpdateManaProgress.Unbind();
+		PlayerCharacter->UpdateStaminaProgress.Unbind();
+	}
 }
 
 // Called every frame to update the progress bars smoothly

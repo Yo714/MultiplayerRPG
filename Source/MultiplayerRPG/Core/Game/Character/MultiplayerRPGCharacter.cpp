@@ -73,8 +73,7 @@ void AMultiplayerRPGCharacter::UpdateHealth_Implementation(float InPercent)
 {
 	// Bind and call the UI update function
 	UpdateHealthProgress.ExecuteIfBound(InPercent);
-	// Spawn damage number
-	RPGMethodUntil::SpawnDamageNum(this, RPGAttributeSet->GetDamage());
+	//RPGMethodUntil::SpawnDamageNum(this, RPGAttributeSet->GetDamage());
 }
 
 // Updates the mana 

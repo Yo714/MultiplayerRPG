@@ -24,6 +24,7 @@ class MULTIPLAYERRPG_API UUI_SkillPanel : public UUI_Base
 	
 public:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	void LayoutSlot();

@@ -80,6 +80,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void PlayDie();
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void SpawnDamageNum(AActor* InActor, float InNum, const FLinearColor& InColor);
+
 public:
 	FUpdateSkillCooldownDelegate UpdateSkillCooldownDelegate;
 

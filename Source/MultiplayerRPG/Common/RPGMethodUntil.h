@@ -7,4 +7,5 @@ namespace RPGMethodUntil
 {
 	//Spawns a damage number UI element at the location of the specified actor.
 	void SpawnDamageNum(AActor* InActor, float DamageNum);
+	void SpawnDamageNum(AActor* InActor, float InNum, const FLinearColor& InColor);
 }

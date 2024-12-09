@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include <MultiplayerRPG/Core/Game/Character/Core/RPGCharacterBase.h>
 #include "UI_Base.generated.h"
 
 /**
@@ -19,4 +20,6 @@ protected:
 	void PlayWidgetAnim(const FString& InAnimName);
 	
 	UWidgetAnimation* GetNameWidgetAnimation(const FString& InWidgetName);
+
+	ARPGCharacterBase* UI_GetRPGCharacterBase();
 };

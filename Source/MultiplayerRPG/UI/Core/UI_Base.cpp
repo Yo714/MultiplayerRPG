@@ -36,3 +36,20 @@ UWidgetAnimation* UUI_Base::GetNameWidgetAnimation(const FString& InWidgetName)
 	}
 	return NULL;
 }
+
+ARPGCharacterBase* UUI_Base::UI_GetRPGCharacterBase()
+{
+	if (GetWorld())
+	{
+		if (APlayerController* InPlayerController = GetWorld()->GetFirstPlayerController<APlayerController>())
+		{
+			if (ARPGCharacterBase* InCharacter = InPlayerController->GetPawn<ARPGCharacterBase>())
+			{
+				return InCharacter;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
