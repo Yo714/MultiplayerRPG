@@ -59,7 +59,7 @@ void UUI_SkillPanel::LayoutSlot()
 									if (UGameplayAbility* GA = Cast<UGameplayAbility>(SkillTables[j]->GameplayAbility->GetDefaultObject()))
 									{
 										FString GATag = GA->AbilityTags.ToStringSimple();
-										if (GATag == "Character.State.Die" || GATag == "Character.State.Hit") 
+										if (GATag == "Character.State.Die" || GATag == "Character.State.Hit" || GATag == "Character.Skill.ComboAttack")
 										{
 											continue;
 										}

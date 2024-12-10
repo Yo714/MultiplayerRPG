@@ -17,7 +17,7 @@ class MULTIPLAYERRPG_API ARPGHitBox : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HitCollision", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* HitCollisionRootComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HitCollision", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseAttribute", meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* HitDamage;
 
 	

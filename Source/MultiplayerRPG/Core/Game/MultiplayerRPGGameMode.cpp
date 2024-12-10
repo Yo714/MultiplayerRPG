@@ -11,6 +11,7 @@ AMultiplayerRPGGameMode::AMultiplayerRPGGameMode()
 	// Set the default pawn class to our Blueprinted character (Khaimera).
 	// This is the character that the player will control.
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Characters/Khaimera/BP_Khaimera"));
+	//static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Characters/Shinbi/BP_Shinbi"));
 
 	// If the class is found, assign it to DefaultPawnClass
 	if (PlayerPawnBPClass.Class != NULL)
