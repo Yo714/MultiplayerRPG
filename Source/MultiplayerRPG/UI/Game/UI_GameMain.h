@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "../Core/UI_Base.h"
+#include "Components/Image.h"
 #include "UI_GameMain.generated.h"
 
 /**
@@ -21,6 +22,8 @@ class MULTIPLAYERRPG_API UUI_GameMain : public UUI_Base
 	UProgressBar* Mana;
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* Stamina;
+	UPROPERTY(meta = (BindWidget))
+	UImage* CharacterImage;
 	
 public:
 	UUI_GameMain(const FObjectInitializer& ObjectInitializer);
@@ -36,9 +39,13 @@ protected:
 	void UpdateManaProgress(float Inpercent);
 	UFUNCTION()
 	void UpdateStaminaProgress(float Inpercent);
+	UFUNCTION()
+	void UpdateCharacterImage(UImage* ImageWidget, UTexture2D* Texture);
 
 private:
 	float TargetHealth;
 	float TargetMana;
 	float TargetStamina;
+
+
 };

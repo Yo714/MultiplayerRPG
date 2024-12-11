@@ -4,6 +4,7 @@
 #include "UI_GameMain.h"
 #include <Components/ProgressBar.h>
 #include <MultiplayerRPG/Core/Game/Character/MultiplayerRPGCharacter.h>
+#include <MultiplayerRPG/Core/Game/Character/Core/RPGCharacterBase.h>
 
 
 // Constructor for the UUI_GameMain class, initializing the progress bar values
@@ -20,13 +21,17 @@ void UUI_GameMain::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// Get the player character (assuming it's the first player in the world)
-	if (AMultiplayerRPGCharacter* PlayerCharacter = Cast<AMultiplayerRPGCharacter>(UI_GetRPGCharacterBase()))
+	if (ARPGCharacterBase* PlayerCharacterBase = Cast<ARPGCharacterBase>(UI_GetRPGCharacterBase()))
 	{
-		// Bind functions to update health, mana, and stamina progress bars
-		PlayerCharacter->UpdateHealthProgress.BindUObject(this, &UUI_GameMain::UpdateHealthProgress);
-		PlayerCharacter->UpdateManaProgress.BindUObject(this, &UUI_GameMain::UpdateManaProgress);
-		PlayerCharacter->UpdateStaminaProgress.BindUObject(this, &UUI_GameMain::UpdateStaminaProgress);
+		if (AMultiplayerRPGCharacter* PlayerCharacter = Cast<AMultiplayerRPGCharacter>(PlayerCharacterBase))
+		{
+			PlayerCharacter->UpdateHealthProgress.BindUObject(this, &UUI_GameMain::UpdateHealthProgress);
+			PlayerCharacter->UpdateManaProgress.BindUObject(this, &UUI_GameMain::UpdateManaProgress);
+			PlayerCharacter->UpdateStaminaProgress.BindUObject(this, &UUI_GameMain::UpdateStaminaProgress);
+		}
+
+
+		UpdateCharacterImage(CharacterImage, PlayerCharacterBase->GetCharacterImage());
 	}
 }
 
@@ -83,4 +88,13 @@ void UUI_GameMain::UpdateManaProgress(float Inpercent)
 void UUI_GameMain::UpdateStaminaProgress(float Inpercent)
 {
 	TargetStamina = Inpercent;
+}
+
+void UUI_GameMain::UpdateCharacterImage(UImage* ImageWidget, UTexture2D* Texture)
+{
+	if (ImageWidget && Texture)
+	{
+		ImageWidget->SetBrushFromTexture(Texture);
+		ImageWidget->SetBrushSize(FVector2D(100, 100));
+	}
 }

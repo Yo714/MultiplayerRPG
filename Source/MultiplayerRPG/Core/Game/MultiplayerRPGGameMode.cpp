@@ -1,26 +1,29 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #include "MultiplayerRPGGameMode.h"
 #include "UObject/ConstructorHelpers.h"
 #include "RPGGameState.h"
 #include "RPGPlayerState.h"
 #include "RPGHUD.h"
+#include "RPGGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 
 AMultiplayerRPGGameMode::AMultiplayerRPGGameMode()
 {
-	// Set the default pawn class to our Blueprinted character (Khaimera).
-	// This is the character that the player will control.
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Characters/Khaimera/BP_Khaimera"));
-	//static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Characters/Shinbi/BP_Shinbi"));
+	// Get the GameInstance (URPGGameInstance)
+	URPGGameInstance* GameInstance = Cast<URPGGameInstance>(UGameplayStatics::GetGameInstance(this));
 
-	// If the class is found, assign it to DefaultPawnClass
-	if (PlayerPawnBPClass.Class != NULL)
+	if (GameInstance)
 	{
-		DefaultPawnClass = PlayerPawnBPClass.Class;
+		// Get the character blueprint from GameInstance
+		TSubclassOf<APawn> PlayerCharacterClass = GameInstance->GetPlayerCharacter();
+
+		// Set the DefaultPawnClass to the selected player character blueprint
+		if (PlayerCharacterClass)
+		{
+			DefaultPawnClass = PlayerCharacterClass;
+		}
 	}
 
 	// Set the GameState, PlayerState, and HUD classes to our custom classes.
-	 // These are used for game state management, player-specific state, and UI elements respectively.
 	GameStateClass = ARPGGameState::StaticClass();
 	PlayerStateClass = ARPGPlayerState::StaticClass();
 	HUDClass = ARPGHUD::StaticClass();

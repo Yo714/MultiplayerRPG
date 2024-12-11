@@ -13,6 +13,7 @@ class AMultiplayerRPGGameMode : public AGameModeBase
 
 public:
 	AMultiplayerRPGGameMode();
+
 };
 
 

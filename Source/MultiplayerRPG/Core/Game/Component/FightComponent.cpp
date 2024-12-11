@@ -37,7 +37,7 @@ void UFightComponent::BeginPlay()
 	if (ARPGGameState* GameState = GetWorld()->GetGameState<ARPGGameState>())
 	{
 		// Get a list of abilities for character ID 1 (this could be expanded for multiple characters)
-		TArray<UGameplayAbility*> Abilities = GameState->GetCharacterSkills(2);
+		TArray<UGameplayAbility*> Abilities = GameState->GetCharacterSkills(RPGCharacterBase->GetCharacterID());
 
 		// Register those abilities with the component
 		RegisterGameAbility(Abilities);

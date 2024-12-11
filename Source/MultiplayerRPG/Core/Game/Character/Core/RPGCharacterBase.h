@@ -47,6 +47,7 @@ public:
 	FORCEINLINE UFightComponent* GetFightComponent() { return FightComponent; }
 	FORCEINLINE URPGAbilitySystemComponent* GetAbilitySystemComponent() { return AbilitySystemComponent; }
 	FORCEINLINE int32 GetCharacterID() { return CharacterID; }
+	FORCEINLINE UTexture2D* GetCharacterImage() { return CharacterImage; }
 
 	UFUNCTION(BlueprintCallable)
 	bool IsAlive();
@@ -90,4 +91,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = RPGCharacter, meta = (AllowPrivateAccess = "true"))
 	int32 CharacterID;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = RPGCharacter, meta = (AllowPrivateAccess = "true"))
+	UTexture2D* CharacterImage;
 };
