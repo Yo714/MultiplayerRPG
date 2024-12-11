@@ -56,10 +56,9 @@ void URPGAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 	if (Data.EvaluatedData.Attribute == GetDamageAttribute())
 	{
 		if (Source && TargetCharacter)
-		{
-			const URPGAttributeSet* SourceAttr =  Cast<URPGAttributeSet>(Source->GetAttributeSet(URPGAttributeSet::StaticClass()));
-			const URPGAttributeSet* TargetAttr = Cast<URPGAttributeSet>(TargetCharacter->GetAbilitySystemComponent()->GetAttributeSet(URPGAttributeSet::StaticClass()));
-		
+		{		
+			ARPGCharacterBase* SourceCharacter = Cast<ARPGCharacterBase>(Context.GetInstigator());
+
 			float ActualDamage = GetDamage();
 			float ActualHealth = FMath::Clamp(GetHealth() - ActualDamage, 0.0f, GetMaxHealth());
 
@@ -75,6 +74,15 @@ void URPGAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 			if (GetHealth() <= 0.f)
 			{
 				TargetCharacter->PlayDie();
+
+				if (SourceCharacter && SourceCharacter->GetAbilitySystemComponent())
+				{
+					if (AMultiplayerRPGCharacter* Character = Cast<AMultiplayerRPGCharacter>(SourceCharacter))
+					{
+						Character->UpdateHealth(GetMaxHealth() / GetMaxHealth());
+						Character->UpdateMana(GetMaxMana() / GetMaxMana());
+					}
+				}
 			}
 
 			TargetCharacter->SpawnDamageNum(TargetActor, -ActualDamage, FLinearColor::Red);
