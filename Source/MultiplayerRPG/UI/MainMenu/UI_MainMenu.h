@@ -17,7 +17,7 @@ struct FCharacterInfo
 	UTexture2D* CharacterImage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<AActor> CharacterBlueprint;
+	TSubclassOf<APawn> CharacterBlueprint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText CharacterDescription;
@@ -38,6 +38,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Selection")
 	TArray<FCharacterInfo> CharacterInfoArray;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Selection")
+	TSubclassOf<APawn> PlayerCharacter;
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	UImage* CharacterImage;
@@ -48,6 +51,9 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* Button_R;
 
+	UPROPERTY(meta = (BindWidget))
+	UButton* Button_PlayGame;
+
 	URPGGameInstance* GameInstance;
 
 	UFUNCTION()
@@ -55,6 +61,9 @@ private:
 
 	UFUNCTION()
 	void OnButtonRClicked();
+
+	UFUNCTION()
+	void OnButtonPlayGameClicked();
 
 	void UpdateCharacterImage();
 };
