@@ -11,20 +11,24 @@ void UUI_SkillPanel::NativeConstruct()
 	Super::NativeConstruct();
 	LayoutSlot();
 
-	if (ARPGCharacterBase* InCharacter = UI_GetRPGCharacterBase())
-	{
-		InCharacter->UpdateSkillCooldownDelegate.BindUObject(this, &UUI_SkillPanel::UpdateSkillCD);
-	}
+	UI_GetRPGCharacterBaseAsync([this](ARPGCharacterBase* InCharacter) {
+		if (InCharacter)
+		{
+			InCharacter->UpdateSkillCooldownDelegate.BindUObject(this, &UUI_SkillPanel::UpdateSkillCD);
+		}
+		});
 }
 
 void UUI_SkillPanel::NativeDestruct()
 {
 	Super::NativeDestruct();
 
-	if (ARPGCharacterBase* InCharacter = UI_GetRPGCharacterBase())
-	{
-		InCharacter->UpdateSkillCooldownDelegate.Unbind();
-	}
+	UI_GetRPGCharacterBaseAsync([this](ARPGCharacterBase* InCharacter) {
+		if (InCharacter)
+		{
+			InCharacter->UpdateSkillCooldownDelegate.Unbind();
+		}
+		});
 }
 
 void UUI_SkillPanel::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -34,48 +38,53 @@ void UUI_SkillPanel::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 void UUI_SkillPanel::LayoutSlot()
 {
-	if (SkillSlotClass)
-	{
-		if (ARPGCharacterBase* InCharacterBase = GetWorld()->GetFirstPlayerController()->GetPawn<ARPGCharacterBase>())
-		{
-			if (ARPGGameState* InGameState = GetWorld()->GetGameState<ARPGGameState>())
-			{
-				int32 CharacterID = InCharacterBase->GetCharacterID();
+    if (!SkillSlotClass)
+    {
+        return;
+    }
 
-				TArray<FSkillDataTable*> SkillTables = InGameState->GetCharacterSkillTables(CharacterID);
+    UI_GetRPGCharacterBaseAsync([this](ARPGCharacterBase* InCharacterBase) {
+        if (!InCharacterBase)
+        {
+            return;
+        }
 
-				int32 j = 0;
+        if (ARPGGameState* InGameState = GetWorld()->GetGameState<ARPGGameState>())
+        {
+            int32 CharacterID = InCharacterBase->GetCharacterID();
+            TArray<FSkillDataTable*> SkillTables = InGameState->GetCharacterSkillTables(CharacterID);
 
-				for (size_t i = 0; i < 6; i++)
-				{
-					if (UUI_SkillSlot* SlotWidget = CreateWidget<UUI_SkillSlot>(GetWorld(), SkillSlotClass))
-					{
-						if (UHorizontalBoxSlot* GridSlot = SlotArray->AddChildToHorizontalBox(SlotWidget))
-						{
-							if (SkillTables.Num() > 0)
-							{
-								for (; j < SkillTables.Num(); j++)
-								{
-									if (UGameplayAbility* GA = Cast<UGameplayAbility>(SkillTables[j]->GameplayAbility->GetDefaultObject()))
-									{
-										FString GATag = GA->AbilityTags.ToStringSimple();
-										if (GATag == "Character.State.Die" || GATag == "Character.State.Hit" || GATag == "Character.Skill.ComboAttack")
-										{
-											continue;
-										}
-									}
+            int32 j = 0;
 
-									SlotWidget->Update(*SkillTables[j]);
-									j++;
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+            for (size_t i = 0; i < 6; i++)
+            {
+                if (UUI_SkillSlot* SlotWidget = CreateWidget<UUI_SkillSlot>(GetWorld(), SkillSlotClass))
+                {
+                    if (UHorizontalBoxSlot* GridSlot = SlotArray->AddChildToHorizontalBox(SlotWidget))
+                    {
+                        if (SkillTables.Num() > 0)
+                        {
+                            for (; j < SkillTables.Num(); j++)
+                            {
+                                if (UGameplayAbility* GA = Cast<UGameplayAbility>(SkillTables[j]->GameplayAbility->GetDefaultObject()))
+                                {
+                                    FString GATag = GA->AbilityTags.ToStringSimple();
+                                    if (GATag == "Character.State.Die" || GATag == "Character.State.Hit" || GATag == "Character.Skill.ComboAttack")
+                                    {
+                                        continue;
+                                    }
+                                }
+
+                                SlotWidget->Update(*SkillTables[j]);
+                                j++;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        });
 }
 
 void UUI_SkillPanel::UpdateSkillCD(const FName& InTagName, float InCDValue)

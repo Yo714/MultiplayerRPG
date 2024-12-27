@@ -16,7 +16,7 @@ void UAnimNotifyState_CheckCombo::NotifyBegin(USkeletalMeshComponent* MeshComp, 
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
 
 	// Ensure we are on the server side (in a networked game) before processing combo logic
-	if (MeshComp->GetOuter() && MeshComp->GetOuter()->GetWorld() && MeshComp->GetOuter()->GetWorld()->IsNetMode(NM_DedicatedServer))
+	if (MeshComp->GetOuter()->GetWorld()->IsNetMode(NM_Client) || MeshComp->GetOuter()->GetWorld()->IsNetMode(NM_Standalone) || MeshComp->GetOuter()->GetWorld()->IsNetMode(NM_DedicatedServer))
 	{
 		// Cast the outer actor to AMultiplayerRPGCharacter (the character the animation belongs to)
 		if (AMultiplayerRPGCharacter* InCharacter = Cast<AMultiplayerRPGCharacter>(MeshComp->GetOuter()))
@@ -40,7 +40,7 @@ void UAnimNotifyState_CheckCombo::NotifyEnd(USkeletalMeshComponent* MeshComp, UA
 	Super::NotifyEnd(MeshComp, Animation);
 
 	// Ensure we are on the server side (in a networked game) before processing combo 
-	if (MeshComp->GetOuter() && MeshComp->GetOuter()->GetWorld() && MeshComp->GetOuter()->GetWorld()->IsNetMode(NM_DedicatedServer))
+	if (MeshComp->GetOuter()->GetWorld()->IsNetMode(NM_Client) || MeshComp->GetOuter()->GetWorld()->IsNetMode(NM_Standalone) || MeshComp->GetOuter()->GetWorld()->IsNetMode(NM_DedicatedServer))
 	{
 		// Cast the outer actor to AMultiplayerRPGCharacter (the character the animation belongs to)
 		if (AMultiplayerRPGCharacter* InCharacter = Cast<AMultiplayerRPGCharacter>(MeshComp->GetOuter()))

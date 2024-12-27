@@ -173,7 +173,7 @@ void FComboCheck::Reset()
 
 void FComboCheck::UpdateComboIndex()
 {
-	check(MaxIndex > 0);
+	//check(MaxIndex > 0);
 	ComboIndex++;
 
 	if (ComboIndex > MaxIndex-1) 

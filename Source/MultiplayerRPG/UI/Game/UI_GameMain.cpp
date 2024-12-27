@@ -21,31 +21,35 @@ void UUI_GameMain::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ARPGCharacterBase* PlayerCharacterBase = Cast<ARPGCharacterBase>(UI_GetRPGCharacterBase()))
-	{
-		if (AMultiplayerRPGCharacter* PlayerCharacter = Cast<AMultiplayerRPGCharacter>(PlayerCharacterBase))
+	UI_GetRPGCharacterBaseAsync([this](ARPGCharacterBase* PlayerCharacterBase)
 		{
-			PlayerCharacter->UpdateHealthProgress.BindUObject(this, &UUI_GameMain::UpdateHealthProgress);
-			PlayerCharacter->UpdateManaProgress.BindUObject(this, &UUI_GameMain::UpdateManaProgress);
-			PlayerCharacter->UpdateStaminaProgress.BindUObject(this, &UUI_GameMain::UpdateStaminaProgress);
-		}
+			if (PlayerCharacterBase)
+			{
+				if (AMultiplayerRPGCharacter* PlayerCharacter = Cast<AMultiplayerRPGCharacter>(PlayerCharacterBase))
+				{
+					PlayerCharacter->UpdateHealthProgress.BindUObject(this, &UUI_GameMain::UpdateHealthProgress);
+					PlayerCharacter->UpdateManaProgress.BindUObject(this, &UUI_GameMain::UpdateManaProgress);
+					PlayerCharacter->UpdateStaminaProgress.BindUObject(this, &UUI_GameMain::UpdateStaminaProgress);
+				}
 
-
-		UpdateCharacterImage(CharacterImage, PlayerCharacterBase->GetCharacterImage());
-	}
+				UpdateCharacterImage(CharacterImage, PlayerCharacterBase->GetCharacterImage());
+			}
+		});
 }
 
 void UUI_GameMain::NativeDestruct()
 {
 	Super::NativeDestruct();
 
-	if (AMultiplayerRPGCharacter* PlayerCharacter = Cast<AMultiplayerRPGCharacter>(UI_GetRPGCharacterBase()))
-	{
-		// Bind functions to update health, mana, and stamina progress bars
-		PlayerCharacter->UpdateHealthProgress.Unbind();
-		PlayerCharacter->UpdateManaProgress.Unbind();
-		PlayerCharacter->UpdateStaminaProgress.Unbind();
-	}
+	UI_GetRPGCharacterBaseAsync([this](ARPGCharacterBase* PlayerCharacterBase)
+		{
+			if (AMultiplayerRPGCharacter* PlayerCharacter = Cast<AMultiplayerRPGCharacter>(PlayerCharacterBase))
+			{
+				PlayerCharacter->UpdateHealthProgress.Unbind();
+				PlayerCharacter->UpdateManaProgress.Unbind();
+				PlayerCharacter->UpdateStaminaProgress.Unbind();
+			}
+		});
 }
 
 // Called every frame to update the progress bars smoothly

@@ -4,6 +4,7 @@
 #include "UI_Base.h"
 #include "Animation/WidgetAnimation.h"
 #include "Blueprint/WidgetBlueprintGeneratedClass.h"
+#include <Kismet/GameplayStatics.h>
 
 // Plays the widget animation with the given name.
 void UUI_Base::PlayWidgetAnim(const FString& InAnimName)
@@ -37,19 +38,22 @@ UWidgetAnimation* UUI_Base::GetNameWidgetAnimation(const FString& InWidgetName)
 	return NULL;
 }
 
-ARPGCharacterBase* UUI_Base::UI_GetRPGCharacterBase()
+void UUI_Base::UI_GetRPGCharacterBaseAsync(TFunction<void(ARPGCharacterBase*)> Callback)
 {
-	if (GetWorld())
-	{
-		if (APlayerController* InPlayerController = GetWorld()->GetFirstPlayerController<APlayerController>())
+	GetWorld()->GetTimerManager().SetTimerForNextTick([this, Callback]()
 		{
-			if (ARPGCharacterBase* InCharacter = InPlayerController->GetPawn<ARPGCharacterBase>())
+			if (APlayerController* InPlayerController = Cast<APlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
 			{
-				return InCharacter;
+				if (InPlayerController && InPlayerController->IsLocalController())
+				{
+					if (ARPGCharacterBase* InCharacter = Cast<ARPGCharacterBase>(InPlayerController->GetPawn()))
+					{
+						Callback(InCharacter);
+						return;
+					}
+				}
 			}
-		}
-	}
 
-	return nullptr;
+			UI_GetRPGCharacterBaseAsync(Callback);
+		});
 }
-

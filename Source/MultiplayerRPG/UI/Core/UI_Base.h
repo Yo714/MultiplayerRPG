@@ -21,5 +21,5 @@ protected:
 	
 	UWidgetAnimation* GetNameWidgetAnimation(const FString& InWidgetName);
 
-	ARPGCharacterBase* UI_GetRPGCharacterBase();
+	void UI_GetRPGCharacterBaseAsync(TFunction<void(class ARPGCharacterBase*)> Callback);
 };
